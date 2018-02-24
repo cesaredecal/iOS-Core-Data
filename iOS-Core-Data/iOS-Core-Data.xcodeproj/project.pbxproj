@@ -14,6 +14,7 @@
 		1DED2D2A2041C60B00FB5DD4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DED2D282041C60B00FB5DD4 /* LaunchScreen.storyboard */; };
 		1DED2D352041C60B00FB5DD4 /* iOS_Core_DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DED2D342041C60B00FB5DD4 /* iOS_Core_DataTests.swift */; };
 		1DED2D402041C60B00FB5DD4 /* iOS_Core_DataUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DED2D3F2041C60B00FB5DD4 /* iOS_Core_DataUITests.swift */; };
+		1DED2D4E2041CC3C00FB5DD4 /* CustomNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DED2D4D2041CC3C00FB5DD4 /* CustomNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		1DED2D3B2041C60B00FB5DD4 /* iOS-Core-DataUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "iOS-Core-DataUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DED2D3F2041C60B00FB5DD4 /* iOS_Core_DataUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_Core_DataUITests.swift; sourceTree = "<group>"; };
 		1DED2D412041C60B00FB5DD4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1DED2D4D2041CC3C00FB5DD4 /* CustomNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				1DED2D1F2041C60B00FB5DD4 /* AppDelegate.swift */,
+				1DED2D4D2041CC3C00FB5DD4 /* CustomNavigationController.swift */,
 				1DED2D212041C60B00FB5DD4 /* ViewController.swift */,
 				1DED2D232041C60B00FB5DD4 /* Main.storyboard */,
 				1DED2D262041C60B00FB5DD4 /* Assets.xcassets */,
@@ -259,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DED2D4E2041CC3C00FB5DD4 /* CustomNavigationController.swift in Sources */,
 				1DED2D222041C60B00FB5DD4 /* ViewController.swift in Sources */,
 				1DED2D202041C60B00FB5DD4 /* AppDelegate.swift in Sources */,
 			);
