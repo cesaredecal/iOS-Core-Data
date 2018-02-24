@@ -8,13 +8,16 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Companies"
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddCompany))
-        
+        tableView.backgroundColor = .darkBlue
+        tableView.tableFooterView = UIView()
+        tableView.separatorColor = .white
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")
         setupNavigationStyle()
     }
     
@@ -22,11 +25,36 @@ class ViewController: UIViewController {
         print("Adding company...")
     }
     
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 8
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
+        cell.backgroundColor = .teal
+        cell.textLabel?.text = "THE COMPANY NAME"
+        cell.textLabel?.textColor = .white
+        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView()
+        view.backgroundColor = .lightBlue
+        return view
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
     internal func setupNavigationStyle() {
         navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.968627451, green: 0.2588235294, blue: 0.3215686275, alpha: 1)
+        navigationController?.navigationBar.barTintColor = .lightRed
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        let properties = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = properties
+        navigationController?.navigationBar.largeTitleTextAttributes = properties
         navigationController?.navigationBar.isTranslucent = false
     }
 }
