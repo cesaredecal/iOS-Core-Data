@@ -7,17 +7,15 @@
 //
 
 import UIKit
+import CoreData
 
 class CompaniesController: UITableViewController, CreateCompanyControllerDelegate {
     
-    var companies = [
-        Company(name: "Apple", founded: Date()),
-        Company(name: "Google", founded: Date()),
-        Company(name: "Facebook", founded: Date())
-    ]
+    var companies = [Company]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchCompanies()
         navigationItem.title = "Companies"
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddCompany))
@@ -27,12 +25,31 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")        
     }
     
+    private func fetchCompanies() {
+        let persistentContainer = NSPersistentContainer(name: "CoreDataModel")
+        persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+        })
+        let context = persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<Company>(entityName: "Company")
+        do {
+            let companies = try context.fetch(fetchRequest)
+            companies.forEach({ (company) in
+                print(company.name ?? "")
+            })
+        } catch let fetchErr {
+            print("Failed to fetch companies", fetchErr)
+        }
+    }
+    
     func didAddCompany(company: Company) {
         companies.append(company)
         let newIndexPath = IndexPath(row: companies.count - 1, section: 0)
         tableView.insertRows(at: [newIndexPath], with: .automatic)
     }
-        
+    
     @objc internal func handleAddCompany() {
         print("Adding company...")
         let createCompanyController = CreateCompanyController()

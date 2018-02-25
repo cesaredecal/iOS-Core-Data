@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CreateCompanyController: UIViewController {
 
@@ -61,10 +62,30 @@ class CreateCompanyController: UIViewController {
         
     @objc func handleSave() {
         print("Trying to save company...")
+        guard let name = self.nameTextField.text else { return }
+
         dismiss(animated: true) {
-            guard let name = self.nameTextField.text else { return }
+            let persistentContainer = NSPersistentContainer(name: "CoreDataModel")
+            persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            })
+            let context = persistentContainer.viewContext
+            let company = NSEntityDescription.insertNewObject(forEntityName: "Company", into: context)
+            company.setValue(name, forKey: "name")
+            
+            // perform the save
+            do {
+                try context.save()
+            } catch let saveError {
+                print(saveError.localizedDescription)
+            }
+            
+            /*
             let company = Company(name: name, founded: Date())
             self.delegate?.didAddCompany(company: company)
+             */
         }
     }
     
