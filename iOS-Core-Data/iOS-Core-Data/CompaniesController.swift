@@ -25,6 +25,28 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")        
     }
     
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
+            let company = self.companies[indexPath.row]
+            print("attempting to delete", company.name)
+            // remove company from table view
+            self.companies.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            // delete company from Core Data
+            let context = CoreDataManager.shared.persistentContainer.viewContext
+            context.delete(company)
+            do {
+                try context.save()
+            } catch let saveErr {
+                print("Failed to delete company")
+            }
+        }
+        let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (_, indexPath) in
+            print("Editing company...")
+        }
+        return [deleteAction, editAction]
+    }
+    
     private func fetchCompanies() {
         let context = CoreDataManager.shared.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<Company>(entityName: "Company")
