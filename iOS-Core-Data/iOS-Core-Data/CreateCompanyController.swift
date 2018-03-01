@@ -12,6 +12,11 @@ import CoreData
 class CreateCompanyController: UIViewController {
 
     var delegate: CreateCompanyControllerDelegate?
+    var company: Company? {
+        didSet {
+            nameTextField.text = company?.name
+        }
+    }
     
     let nameLabel: UILabel = {
         let label = UILabel()
@@ -27,10 +32,16 @@ class CreateCompanyController: UIViewController {
         return textField
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // ternary syntax
+        navigationItem.title = company == nil ? "Create Company" : "Edit Company"
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        title = "Create Company"
         view.backgroundColor = .darkBlue
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(handleSave))
@@ -61,9 +72,30 @@ class CreateCompanyController: UIViewController {
     }
         
     @objc func handleSave() {
+        if company == nil {
+            createCompany()
+        } else {
+            saveCompanyChanges()
+        }
+    }
+    
+    private func saveCompanyChanges() {
+        let context = CoreDataManager.shared.persistentContainer.viewContext
+        company?.name = nameTextField.text
+        do {
+            try context.save()
+            dismiss(animated: true, completion: {
+                self.delegate?.didEditCompany(company: self.company!)
+            })
+        } catch let saveErr {
+            print(saveErr.localizedDescription)
+        }
+    }
+    
+    private func createCompany() {
         let context = CoreDataManager.shared.persistentContainer.viewContext
         let company = NSEntityDescription.insertNewObject(forEntityName: "Company", into: context)
-        company.setValue(nameTextField.text, forKey: "name")        
+        company.setValue(nameTextField.text, forKey: "name")
         do {
             try context.save()
             self.dismiss(animated: true, completion: {

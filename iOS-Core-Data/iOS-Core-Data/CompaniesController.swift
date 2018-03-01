@@ -28,7 +28,6 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
             let company = self.companies[indexPath.row]
-            print("attempting to delete", company.name)
             // remove company from table view
             self.companies.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -38,13 +37,24 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
             do {
                 try context.save()
             } catch let saveErr {
-                print("Failed to delete company")
+                print("Failed to delete company:", saveErr.localizedDescription)
             }
         }
-        let editAction = UITableViewRowAction(style: .normal, title: "Edit") { (_, indexPath) in
-            print("Editing company...")
-        }
+        let editAction = UITableViewRowAction(style: .normal, title: "Edit", handler: editHandlerFunction)
+        
+        deleteAction.backgroundColor = .lightRed
+        editAction.backgroundColor = .darkBlue
+        
         return [deleteAction, editAction]
+    }
+    
+    private func editHandlerFunction(action: UITableViewRowAction, indexPath: IndexPath) {
+        print("editing")
+        let editCompanyController = CreateCompanyController()
+        editCompanyController.delegate = self
+        editCompanyController.company = companies[indexPath.row]
+        let navController = CustomNavigationController(rootViewController: editCompanyController)
+        present(navController, animated: true, completion: nil)
     }
     
     private func fetchCompanies() {
@@ -57,6 +67,13 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
         } catch let fetchErr {
             print("Failed to fetch companies", fetchErr)
         }
+    }
+    
+    func didEditCompany(company: Company) {
+        // update my table view somehow
+        guard let row = companies.index(of: company) else { return }
+        let indexPath = IndexPath(row: row, section: 0)
+        tableView.reloadRows(at: [indexPath], with: .middle)
     }
     
     func didAddCompany(company: Company) {
