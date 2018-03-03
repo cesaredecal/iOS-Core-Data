@@ -19,6 +19,22 @@ class CreateCompanyController: UIViewController {
         }
     }
     
+    lazy var companyImageView: UIImageView = {
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "select_photo_empty"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectPhoto)))
+        return imageView
+    }()
+    
+    @objc private func handleSelectPhoto() {
+        print("Trying to select a photo")
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = true
+        present(imagePickerController, animated: true, completion: nil)
+    }
+    
     let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Name"
@@ -60,12 +76,18 @@ class CreateCompanyController: UIViewController {
         view.addSubview(backgroundView)
         backgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         backgroundView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        backgroundView.heightAnchor.constraint(equalToConstant: 250).isActive = true
+        backgroundView.heightAnchor.constraint(equalToConstant: 350).isActive = true
         backgroundView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         backgroundView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         
+        view.addSubview(companyImageView)
+        companyImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 8).isActive = true
+        companyImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        companyImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        companyImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        
         view.addSubview(nameLabel)
-        nameLabel.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        nameLabel.topAnchor.constraint(equalTo: companyImageView.bottomAnchor).isActive = true
         nameLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16).isActive = true
         nameLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
         nameLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
@@ -122,6 +144,24 @@ class CreateCompanyController: UIViewController {
     }
     
     @objc func handleCancel() {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+extension CreateCompanyController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        print(info)
+        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+            companyImageView.image = editedImage
+        }
+        
+        if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            companyImageView.image = originalImage
+        }
         dismiss(animated: true, completion: nil)
     }
 }
