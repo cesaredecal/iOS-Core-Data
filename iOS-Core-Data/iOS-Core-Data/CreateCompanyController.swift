@@ -16,6 +16,10 @@ class CreateCompanyController: UIViewController {
         didSet {
             nameTextField.text = company?.name
             datePicker.date = company?.founded ?? Date()
+            
+            if let imageData = company?.imageData {
+                companyImageView.image = UIImage(data: imageData)
+            }
         }
     }
     
@@ -23,6 +27,7 @@ class CreateCompanyController: UIViewController {
         let imageView = UIImageView(image: #imageLiteral(resourceName: "select_photo_empty"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFill
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectPhoto)))
         return imageView
     }()
@@ -67,6 +72,15 @@ class CreateCompanyController: UIViewController {
         view.backgroundColor = .darkBlue
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(handleSave))
+        
+        setupCircularImageStyle()
+    }
+    
+    private func setupCircularImageStyle() {
+        companyImageView.layer.cornerRadius = companyImageView.frame.width / 2
+        companyImageView.clipsToBounds = true
+        companyImageView.layer.borderColor = UIColor.darkBlue.cgColor
+        companyImageView.layer.borderWidth = 2
     }
     
     private func setupUI() {
@@ -118,6 +132,12 @@ class CreateCompanyController: UIViewController {
         let context = CoreDataManager.shared.persistentContainer.viewContext
         company?.name = nameTextField.text
         company?.founded = datePicker.date
+        
+        if let image = companyImageView.image {
+            let imageData = UIImageJPEGRepresentation(image, 0.8)
+            company?.imageData = imageData
+        }
+        
         do {
             try context.save()
             dismiss(animated: true, completion: {
@@ -133,6 +153,12 @@ class CreateCompanyController: UIViewController {
         let company = NSEntityDescription.insertNewObject(forEntityName: "Company", into: context)
         company.setValue(nameTextField.text, forKey: "name")
         company.setValue(datePicker.date, forKey: "founded")
+        
+        if let image = companyImageView.image {
+            let imageData = UIImageJPEGRepresentation(image, 0.8)
+            company.setValue(imageData, forKey: "imageData")
+        }
+        
         do {
             try context.save()
             self.dismiss(animated: true, completion: {
@@ -154,14 +180,13 @@ extension CreateCompanyController: UIImagePickerControllerDelegate, UINavigation
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        print(info)
+        if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            companyImageView.image = originalImage
+        }
         if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
             companyImageView.image = editedImage
         }
         
-        if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            companyImageView.image = originalImage
-        }
         dismiss(animated: true, completion: nil)
     }
 }
