@@ -15,6 +15,7 @@ class CreateCompanyController: UIViewController {
     var company: Company? {
         didSet {
             nameTextField.text = company?.name
+            datePicker.date = company?.founded ?? Date()
         }
     }
     
@@ -32,10 +33,15 @@ class CreateCompanyController: UIViewController {
         return textField
     }()
     
+    let datePicker: UIDatePicker = {
+        let dp = UIDatePicker()
+        dp.datePickerMode = .date
+        dp.translatesAutoresizingMaskIntoConstraints = false
+        return dp
+    }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // ternary syntax
         navigationItem.title = company == nil ? "Create Company" : "Edit Company"
     }
     
@@ -54,7 +60,7 @@ class CreateCompanyController: UIViewController {
         view.addSubview(backgroundView)
         backgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         backgroundView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        backgroundView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        backgroundView.heightAnchor.constraint(equalToConstant: 250).isActive = true
         backgroundView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         backgroundView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         
@@ -69,6 +75,13 @@ class CreateCompanyController: UIViewController {
         nameTextField.rightAnchor.constraint(equalTo: view.rightAnchor)
         nameTextField.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
         nameTextField.topAnchor.constraint(equalTo: nameLabel.topAnchor).isActive = true
+        
+        view.addSubview(datePicker)
+        datePicker.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
+        datePicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        datePicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        datePicker.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor).isActive = true
+        
     }
         
     @objc func handleSave() {
@@ -82,6 +95,7 @@ class CreateCompanyController: UIViewController {
     private func saveCompanyChanges() {
         let context = CoreDataManager.shared.persistentContainer.viewContext
         company?.name = nameTextField.text
+        company?.founded = datePicker.date
         do {
             try context.save()
             dismiss(animated: true, completion: {
@@ -96,6 +110,7 @@ class CreateCompanyController: UIViewController {
         let context = CoreDataManager.shared.persistentContainer.viewContext
         let company = NSEntityDescription.insertNewObject(forEntityName: "Company", into: context)
         company.setValue(nameTextField.text, forKey: "name")
+        company.setValue(datePicker.date, forKey: "founded")
         do {
             try context.save()
             self.dismiss(animated: true, completion: {
