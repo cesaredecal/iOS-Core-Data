@@ -23,7 +23,7 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
         tableView.backgroundColor = .darkBlue
         tableView.tableFooterView = UIView()
         tableView.separatorColor = .white
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")        
+        tableView.register(CompanyCell.self, forCellReuseIdentifier: "cellId")
     }
     
     @objc private func handleReset() {
@@ -111,30 +111,16 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return companies.count
     }
-    
-    let dateFormatter = DateFormatter()
-    
+        
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
-        cell.backgroundColor = .teal
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as? CompanyCell else { return UITableViewCell() }
         let company = companies[indexPath.row]
-        dateFormatter.dateStyle = .medium
-        if let name = company.name, let founded = company.founded {
-            let foundedDateString = dateFormatter.string(from: founded)
-            cell.textLabel?.text = "\(name) - Founded: \(foundedDateString)"
-        } else {
-            cell.textLabel?.text = company.name
-        }
-        cell.textLabel?.textColor = .white
-        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        
-        if let imageData = company.imageData {
-            cell.imageView?.image = UIImage(data: imageData)
-        } else {
-            cell.imageView?.image = #imageLiteral(resourceName: "select_photo_empty")
-        }
-        
+        cell.company = company        
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
     // MARK: - Header
