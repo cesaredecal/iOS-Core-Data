@@ -16,6 +16,7 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchCompanies()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Reset", style: .plain, target: self, action: #selector(handleReset))
         navigationItem.title = "Companies"
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddCompany))
@@ -23,6 +24,24 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
         tableView.tableFooterView = UIView()
         tableView.separatorColor = .white
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")        
+    }
+    
+    @objc private func handleReset() {
+        print("attempting to delete all core data objects")
+        let context = CoreDataManager.shared.persistentContainer.viewContext
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: Company.fetchRequest())
+        do {
+            try context.execute(batchDeleteRequest)
+            var indexPathsToRemove = [IndexPath]()
+            for (index, _) in companies.enumerated() {
+                let indexPath = IndexPath(row: index, section: 0)
+                indexPathsToRemove.append(indexPath)
+            }
+            companies.removeAll()
+            tableView.deleteRows(at: indexPathsToRemove, with: .left)
+        } catch let delErr {
+            print("Failed to delete objects from Core Data:", delErr)
+        }
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -70,7 +89,6 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
     }
     
     func didEditCompany(company: Company) {
-        // update my table view somehow
         guard let row = companies.index(of: company) else { return }
         let indexPath = IndexPath(row: row, section: 0)
         tableView.reloadRows(at: [indexPath], with: .middle)
@@ -119,6 +137,7 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
         return cell
     }
     
+    // MARK: - Header
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
         view.backgroundColor = .lightBlue
@@ -127,6 +146,19 @@ class CompaniesController: UITableViewController, CreateCompanyControllerDelegat
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 50
-    }    
+    }
+    
+    // MARK: - Footer
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let label = UILabel()
+        label.text = "No companies available..."
+        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.textAlignment = .center
+        return label
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return companies.isEmpty ? 150 : 0
+    }
 }
-
