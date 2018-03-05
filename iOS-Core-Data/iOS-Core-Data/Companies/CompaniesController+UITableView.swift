@@ -9,6 +9,7 @@
 import UIKit
 
 extension CompaniesController {
+    // MARK: - Rows
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as? CompanyCell else { return UITableViewCell() }
         let company = companies[indexPath.row]
@@ -18,6 +19,12 @@ extension CompaniesController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let employeesController = EmployeesController()
+        employeesController.company = companies[indexPath.row]
+        navigationController?.pushViewController(employeesController, animated: true)
     }
     
     // MARK: - Header

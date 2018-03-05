@@ -70,7 +70,7 @@ class CreateCompanyController: UIViewController {
         super.viewDidLoad()
         setupUI()
         view.backgroundColor = .darkBlue
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
+        setupCancelButton(selector: #selector(handleCancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(handleSave))
         
         setupCircularImageStyle()
