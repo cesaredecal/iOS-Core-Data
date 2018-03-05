@@ -70,7 +70,7 @@ class CreateCompanyController: UIViewController {
         super.viewDidLoad()
         setupUI()
         view.backgroundColor = .darkBlue
-        setupCancelButton(selector: #selector(handleCancel))
+        setupCancelButton()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(handleSave))
         
         setupCircularImageStyle()
@@ -84,15 +84,7 @@ class CreateCompanyController: UIViewController {
     }
     
     private func setupUI() {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = .lightBlue
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(backgroundView)
-        backgroundView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        backgroundView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        backgroundView.heightAnchor.constraint(equalToConstant: 350).isActive = true
-        backgroundView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        backgroundView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        let backgroundView = setupBackgroundView(height: 350)
         
         view.addSubview(companyImageView)
         companyImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 8).isActive = true
@@ -117,7 +109,6 @@ class CreateCompanyController: UIViewController {
         datePicker.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         datePicker.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         datePicker.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor).isActive = true
-        
     }
         
     @objc func handleSave() {
@@ -167,10 +158,6 @@ class CreateCompanyController: UIViewController {
         } catch let saveError {
             print(saveError.localizedDescription)
         }
-    }
-    
-    @objc func handleCancel() {
-        dismiss(animated: true, completion: nil)
     }
 }
 

@@ -19,7 +19,7 @@ class CompaniesController: UITableViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Reset", style: .plain, target: self, action: #selector(handleReset))
         navigationItem.title = "Companies"
         view.backgroundColor = .white
-        setupPlusBUttonInNavBar(selector: #selector(handleAddCompany))
+        setupPlusButtonInNavBar(selector: #selector(handleAddCompany))
         tableView.backgroundColor = .darkBlue
         tableView.tableFooterView = UIView()
         tableView.separatorColor = .white
