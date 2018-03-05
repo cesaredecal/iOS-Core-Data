@@ -9,8 +9,7 @@
 import CoreData
 
 struct CoreDataManager {
-    static let shared = CoreDataManager() // will live forever as well as its properties
-    // it never gets reclaimed by the operating system
+    static let shared = CoreDataManager()
 
     let persistentContainer: NSPersistentContainer = {
         let persistentContainer = NSPersistentContainer(name: "CoreDataModel")
@@ -21,4 +20,16 @@ struct CoreDataManager {
         })
         return persistentContainer
     }()
+
+    func fetchCompanies() -> [Company] {
+        let context = persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<Company>(entityName: "Company")
+        do {
+            let companies = try context.fetch(fetchRequest)
+            return companies
+        } catch let fetchErr {
+            print("Failed to fetch companies", fetchErr)
+            return []
+        }
+    }
 }
