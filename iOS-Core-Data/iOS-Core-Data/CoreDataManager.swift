@@ -33,16 +33,19 @@ struct CoreDataManager {
         }
     }
     
-    func createEmployee(name: String) -> Error? {
+    func createEmployee(name: String) -> (Employee?, Error?) {
         let context = persistentContainer.viewContext
-        let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context)
+        guard let employee = NSEntityDescription.insertNewObject(forEntityName: "Employee", into: context) as? Employee else {
+            return (nil, nil)
+        }
+        
         employee.setValue(name, forKey: "name")
         do {
             try context.save()
-            return nil
+            return (employee, nil)
         } catch let saveErr {
             print(saveErr.localizedDescription)
-            return saveErr
+            return (nil, saveErr)
         }
     }
 }

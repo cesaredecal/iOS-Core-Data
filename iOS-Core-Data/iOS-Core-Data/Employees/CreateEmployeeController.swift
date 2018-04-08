@@ -10,6 +10,8 @@ import UIKit
 
 class CreateEmployeeController: UIViewController {
     
+    weak var delegate: CreateEmployeeControllerDelegate?
+    
     let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Name"
@@ -36,11 +38,17 @@ class CreateEmployeeController: UIViewController {
     
     @objc private func handleSave() {
         print("saving employee...")
-        if let name = nameTextField.text {
-            let error = CoreDataManager.shared.createEmployee(name: name)
-            print(error ?? "Error")
+        guard let name = nameTextField.text else { return }
+        let (employee, error) = CoreDataManager.shared.createEmployee(name: name)
+        print(error ?? "Error")
+
+        // creation success
+        dismiss(animated: true) {
+            // we'll call the delegate somehow
+            if let employee = employee {
+                self.delegate?.didAddEmployee(employee: employee)
+            }
         }
-        dismiss(animated: true, completion: nil)
     }
     
     private func setupUI() {
